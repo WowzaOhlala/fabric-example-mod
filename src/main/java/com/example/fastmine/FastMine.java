@@ -1,57 +1,9 @@
 package com.example.fastmine;
 
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 
-public class FastMine implements ModInitializer, ClientModInitializer {
-
-    public static KeyBinding toggleKey;
-    public static boolean fastMineEnabled = false;
-
+public class FastMine implements ModInitializer {
     @Override
     public void onInitialize() {
-        // Main initialization
-    }
-
-    @Override
-    public void onInitializeClient() {
-        // Registers 'Z' key binding under Controls menu
-        toggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.fastmine.toggle",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_Z,
-            "category.fastmine"
-        ));
-
-        // Listen for key presses every client tick
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null) return;
-
-            // Toggle fast mining state on key press
-            while (toggleKey.wasPressed()) {
-                fastMineEnabled = !fastMineEnabled;
-
-                // Send action bar message above hotbar
-                client.player.sendMessage(
-                    Text.literal("Fast Mining: " + (fastMineEnabled ? "§aENABLED" : "§cDISABLED")),
-                    true
-                );
-            }
-
-            // Apply Haste V (Amplifier 4) continuously while active
-            if (fastMineEnabled) {
-                client.player.addStatusEffect(new StatusEffectInstance(
-                    StatusEffects.HASTE, 20, 4, false, false, false
-                ));
-            }
-        });
     }
 }
